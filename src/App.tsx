@@ -1,25 +1,58 @@
 import React from 'react';
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 
+interface UserData {
+  name: {
+    title: string;
+    first: string;
+    last: string;
+  }
+  dob: {
+    age: string
+  }
+  location: {
+    city: string;
+    street: {
+      number: number;
+      name: string;
+    };
+    country: string;
+    postcode: number;
+  }
+};
+
 function App() {
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    fetchUserData().then((data) => {
+      setUserData(data);
+    });
+  }, []);
+
+  const fetchUserData = async () => {
+    const response = await fetch('https://randomuser.me/api/');
+    const data = await response.json();
+    console.log(data.results[0]);
+    return data.results[0];
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <main className="App">
+      <header>
+        Random User
       </header>
-    </div>
+      <div>
+        <span>Name: {userData?.name.first}</span>
+      </div>
+      <div>
+        <span>Age: {userData?.dob.age}</span>
+      </div>
+      <div>
+        <span>Address :{userData?.location.city}</span>
+      </div>
+    </main>
   );
 }
 
